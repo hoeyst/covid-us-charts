@@ -6,25 +6,20 @@ library(ggplot2)  # for creating graphs
 setwd("~/Documents/covid/")
 
 #download data from NY Times GitHub repository, https://github.com/nytimes/covid-19-data
-covidDataUrl <- "https://github.com/nytimes/covid-19-data"
+#use the direct URL for the us-states.csv file: https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv
+covidDataUrl <- "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv"
 
 #create a temporary directory
 td <- tempdir()
 
 #create a temporary placeholder file
-tf <- tempfile(tmpdir=td, fileext=".zip")
+tf <- tempfile(tmpdir=td, fileext=".csv")
 
 #download the covid data into the tempfile
 download.file(covidDataUrl, tf)
 
-#unzip the us-states.csv file from inside the archive into the temp directory
-unzip(tf, files="covid-19-data-master/us-states.csv", exdir=td, overwrite=TRUE)
-
-#create a file path to the us-states.csv data file
-fpath=file.path(td, "covid-19-data-master/us-states.csv")
-
-#read the us-states.csv data using the fpath created above
-covid.states <- read.csv(fpath, stringsAsFactors = FALSE)
+#read the downloaded CSV us-states.csv file
+covid.states <- read.csv(tf, stringsAsFactors = FALSE)
 
 #convert the date strings to Date objects
 covid.states$date <- as.Date(covid.states$date)
@@ -82,5 +77,4 @@ for(myState in states) {
   #note that you could use the pdf() function instead of png() above; then, the width and height are specified as numbers of inches, e.g., pdf(outputFile, width=10, height=7.5)
   print(statePlot)
   dev.off()
-  
 }
