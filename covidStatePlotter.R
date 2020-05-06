@@ -1,14 +1,11 @@
-library(zoo)
-library(dplyr)
-library(lubridate) # for working with dates
 library(ggplot2)  # for creating graphs
-library(scales)   # to access breaks/formatting functions
-library(gridExtra) # for arranging plots
 
-#note! you need to specify a directory/folder on your computer that has the "covid-19-data-master" directory (downloaded from the NYT github) inside it. Mine is called "~/Documents/covid" but yours can be anything!
+#note! you need to specify a directory/folder on your computer where the output files will be stored
+#I want my files output to ~/Documents/covid/ but yours can go anywhere
+#TODO#2020-05-06 test to ensure directory exists 
 setwd("~/Documents/covid/")
 
-#data downloaded from https://github.com/nytimes/covid-19-data
+#download data from NY Times GitHub repository, https://github.com/nytimes/covid-19-data
 covidDataUrl <- "https://github.com/nytimes/covid-19-data"
 
 #create a temporary directory
@@ -29,9 +26,8 @@ fpath=file.path(td, "covid-19-data-master/us-states.csv")
 #read the us-states.csv data using the fpath created above
 covid.states <- read.csv(fpath, stringsAsFactors = FALSE)
 
-#convert the dates
+#convert the date strings to Date objects
 covid.states$date <- as.Date(covid.states$date)
-
 
 #plot cumulative deaths by state
 #p <- ggplot(covid.states, aes(date, deaths))
@@ -42,8 +38,13 @@ covid.states$date <- as.Date(covid.states$date)
 #
 #or, if you only want to produce plots for select states, you can create a list, like this:
 #states <- c("Massachusetts", "Florida", "New York")
-states <- c("Massachusetts", "New York")
+#
+states <- unique(covid.states$state)
 
+#this is the "dumb" way to do this, instead of the split-apply-combine route;
+#but, it works, and that's what counts!
+#
+#loop through each state and do the necessary...
 for(myState in states) {
   
   #calculate data just myState
@@ -78,6 +79,8 @@ for(myState in states) {
   #save it to a PNG file
   outputFile <- paste(myState,"covid", "data", max(state.covid$date), "png", sep=".")
   png(outputFile, width=1100, height=850)
+  #note that you could use the pdf() function instead of png() above; then, the width and height are specified as numbers of inches, e.g., pdf(outputFile, width=10, height=7.5)
   print(statePlot)
   dev.off()
+  
 }
