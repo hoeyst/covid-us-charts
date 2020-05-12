@@ -1,8 +1,10 @@
 library(ggplot2)  # for creating graphs
+library(dplyr) # for the filter command
+library(zoo) # for the rolling mean command
 
 #note! you need to specify a directory/folder on your computer where the output files will be stored
 #I want my files output to ~/Documents/covid/ but yours can go anywhere
-#TODO#2020-05-06 test to ensure directory exists 
+#TODO#2020-05-06 test to ensure directory exists
 setwd("~/Documents/covid/")
 
 #download data from NY Times GitHub repository, https://github.com/nytimes/covid-19-data
